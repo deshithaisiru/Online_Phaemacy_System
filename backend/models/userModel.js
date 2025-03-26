@@ -16,9 +16,11 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    userType: {
+    role: {
       type: String,
       required: true,
+      enum: ['client', 'admin'],  // Specify roles
+      default: 'client',
     },
     isAdmin: {
       type: Boolean,
@@ -28,17 +30,21 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    address: {
+      type: String,
+      required: false,
+    },
     height: {
       type: Number,
-      required: false, // Set to true if it's mandatory
+      required: false, // Optional field
     },
     weight: {
       type: Number,
-      required: false, // Set to true if it's mandatory
+      required: false, // Optional field
     },
     birthday: {
       type: Date,
-      required: false, // Set to true if it's mandatory
+      required: false, // Optional field
     },
     resetPasswordToken: {
       type: String,
@@ -50,11 +56,16 @@ const userSchema = mongoose.Schema(
     },
     address: {
       type: String,
-      required: false, // Set to true if it's mandatory
+      required: false, // Optional field
+    },
+    // Optional: Prescription uploads, if required for medical-related products
+    prescription: {
+      type: String,  // Could store a URL or file reference for prescription upload
+      required: false,
     },
   },
   {
-    timestamps: true,
+    timestamps: true,  // Automatically adds createdAt and updatedAt fields
   }
 );
 
@@ -77,3 +88,4 @@ userSchema.pre('save', async function (next) {
 const User = mongoose.model('User', userSchema);
 
 export default User;
+

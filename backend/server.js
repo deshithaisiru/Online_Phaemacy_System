@@ -6,47 +6,30 @@ import connectDB from './config/db.js';
 import cookieParser from 'cookie-parser';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import userRoutes from './routes/userRoutes.js';
-import cors from 'cors';  // Added CORS
+import cors from 'cors';
 
-//Inventory - Deshitha
-import itemsRouter from './routes/items.route.js';
-
-//Schedule - Nethula
-import Schedule from './routes/schedule.route.js';
-
-//Progress - Kalish
-import Progress from './routes/order.route.js';
-
-//Promo Package - Dhanga
-import PromoPackage from './routes/Promo.route.js';
-import packageRoutes from './routes/packageRoutes.js';
-
-
-//Feedback - Okitha
-import instructFeedbacksRouter from './routes/Feedback/instructFeedbackRouter.js';
-import packageFeedbackRouter from './routes/Feedback/packageFeedbackRouter.js';
-
-
-//Employee - Pathumi
-import salaryRoute from './routes/Employee/salaryRoutes.js';
-import infoRoute from './routes/Employee/employeeInfoRoutes.js';
-import otRoute from './routes/Employee/overtimeRoutes.js';
-import leaveRoute from './routes/Employee/leaveRoutes.js';
-
-//Supplier - Sajana
-import Supplier from './routes/Supplier/supplier.route.js';
-
-
-
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 
 // Connect to the database
 connectDB();
 
 const app = express();
 
-// Set up CORS
-app.use(cors());
+// Set up CORS with specific options
+app.use(cors({
+  origin: 'http://localhost:3000', // Your frontend URL
+  credentials: true, // Allow credentials (cookies, authorization headers)
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+}));
+
+// Add OPTIONS handling for preflight requests
+app.options('*', cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+}));
 
 // Set the view engine to EJS
 app.set('views', path.join(path.resolve(), 'views'));
@@ -62,43 +45,23 @@ app.use(cookieParser());
 // User routes
 app.use('/api/users', userRoutes);
 
-//Inventory - Deshitha
-app.use('/api/items', itemsRouter);
-
-//Schedule - Nethula
-app.use('/api/schedule', Schedule);
-
-//Progress - Kalish
-app.use('/api/progress', Progress);
-
-//Promo Package - Dhanga
-app.use('/api/reco', PromoPackage);
-app.use('/api/packages', packageRoutes);
-
-//Feedback - Okitha
-app.use('/api', instructFeedbacksRouter,packageFeedbackRouter);
-
-//Employee - Pathumi
-app.use('/salarys', salaryRoute);
-app.use('/informations',infoRoute);
-app.use('/ot', otRoute);
-app.use('/leave', leaveRoute)
-
-//Supplier - Sajana
-app.use('/api/sup', Supplier);
+// Test route to verify API is working
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'API is working' });
+});
 
 // Serve static files and handle routing for production
 if (process.env.NODE_ENV === 'production') {
   const __dirname = path.resolve();
-  app.use(express.static(path.join(__dirname, '/frontend/dist')));
+  app.use(express.static(path.join(__dirname, '/medicart-frontend/dist')));
 
   app.get('*', (req, res) =>
-    res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'))
+    res.sendFile(path.resolve(__dirname, 'medicart-frontend', 'dist', 'index.html'))
   );
 } else {
   // For development, render EJS on the root route
   app.get('/', (req, res) => {
-    res.render('index');  // Render `index.ejs` file from the `views` directory
+    res.render('index');
   });
 }
 
@@ -107,9 +70,4 @@ app.use(notFound);
 app.use(errorHandler);
 
 // Start the server
-app.listen(port, () => console.log(`Server started on port ${port}`));
-
-
-
-
-
+app.listen(port, () => console.log(`MediCart server started on port ${port}`));

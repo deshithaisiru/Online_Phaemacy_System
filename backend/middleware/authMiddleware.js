@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import asyncHandler from 'express-async-handler';
 import User from '../models/userModel.js';
 
-// Middleware to protect routes
+// Middleware to protect routes (ensure the user is authenticated)
 const protect = asyncHandler(async (req, res, next) => {
   let token;
 
@@ -44,7 +44,7 @@ const isAdmin = asyncHandler(async (req, res, next) => {
     }
 
     // Check if the user has admin privileges
-    if (user.isAdmin) {
+    if (user.role === 'admin') {  // We check the `role` field now instead of `isAdmin`
       next();
     } else {
       console.log('Not authorized as an admin');
@@ -57,3 +57,4 @@ const isAdmin = asyncHandler(async (req, res, next) => {
 });
 
 export { protect, isAdmin };
+

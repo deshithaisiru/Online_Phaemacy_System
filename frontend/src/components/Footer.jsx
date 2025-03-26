@@ -19,7 +19,7 @@ const currentYear = new Date().getFullYear();
 
 export function FooterWithSocialLinks() {
   return (
-    <footer className="relative w-full bg-black/90 border-t border-yellow-500/20 shadow-lg backdrop-blur-sm">
+    <footer className="relative w-full bg-blue-600 border-t border-white/20 shadow-lg backdrop-blur-sm">
       <div className="mx-auto w-full max-w-7xl px-8 py-8">
         <div className="grid grid-cols-1 justify-between gap-4 md:grid-cols-2">
           <Typography variant="h5" className="mb-6 text-yellow-500 font-bold">
@@ -30,7 +30,7 @@ export function FooterWithSocialLinks() {
               <ul key={title}>
                 <Typography
                   variant="small"
-                  className="mb-3 font-medium text-yellow-500"
+                  className="mb-3 font-medium text-white"
                 >
                   {title}
                 </Typography>
@@ -39,7 +39,7 @@ export function FooterWithSocialLinks() {
                     <Typography
                       as="a"
                       href="#"
-                      className="py-1.5 font-normal text-yellow-100/80 hover:text-yellow-500 transition-colors block"
+                      className="py-1.5 font-normal text-white/80 hover:text-blue-100 transition-colors block"
                     >
                       {link}
                     </Typography>
@@ -61,7 +61,7 @@ export function FooterWithSocialLinks() {
             <Typography 
               as="a" 
               href="#" 
-              className="opacity-80 transition-all hover:opacity-100 hover:text-yellow-500"
+              className="opacity-80 transition-all hover:opacity-100 hover:text-blue-100"
             >
               <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path
@@ -74,7 +74,7 @@ export function FooterWithSocialLinks() {
             <Typography 
               as="a" 
               href="#" 
-              className="opacity-80 transition-all hover:opacity-100 hover:text-yellow-500"
+              className="opacity-80 transition-all hover:opacity-100 hover:text-blue-100"
             >
               <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path

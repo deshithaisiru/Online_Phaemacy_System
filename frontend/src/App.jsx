@@ -1,21 +1,21 @@
-import { Outlet } from 'react-router-dom';
+import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Outlet } from 'react-router-dom';
 import Header from './components/Header';
-import { FooterWithSocialLinks } from "./components/Footer";
+import Footer from './components/NewFooter';
 
 const App = () => {
+  console.log("App component rendering");
   return (
-    <>
-      <Header />
+    <div className="flex flex-col min-h-screen">
       <ToastContainer />
-      <div className="">
-        <Outlet />
-      </div>
-      <div className="">
-        <FooterWithSocialLinks />
-      </div>
-    </>
+      <Header />
+      <main className="flex-grow mt-16 mb-8">
+        <Outlet /> {/* This is crucial for nested routes to render */}
+      </main>
+      <Footer />
+    </div>
   );
 };
 

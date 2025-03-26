@@ -21,13 +21,18 @@ const Header = () => {
 
   const logoutHandler = async () => {
     try {
-      await logoutApiCall().unwrap();
+      const result = await logoutApiCall().unwrap();
       dispatch(logout());
       navigate('/');
-      toast.success('Logout successful!');
+      toast.success(result.message || 'Logged out successfully');
     } catch (err) {
-      console.error(err);
-      toast.error('Logout failed');
+      console.error('Logout error:', err);
+      toast.error(err?.data?.message || 'Logout failed');
+      // If the error is due to no token, still clear the local state
+      if (err?.status === 401) {
+        dispatch(logout());
+        navigate('/');
+      }
     }
   };
 
@@ -66,26 +71,26 @@ const Header = () => {
   const ProfileDropdownItem = ({ icon: Icon, text, onClick }) => (
     <button 
       onClick={onClick} 
-      className="flex items-center px-4 py-2 text-sm text-yellow-100/80 hover:bg-yellow-500/10 w-full text-left group"
+      className="flex items-center px-4 py-2 text-sm text-white hover:bg-blue-500/10 w-full text-left group"
     >
-      <Icon className="mr-3 text-yellow-500 group-hover:text-yellow-400 transition-colors" />
+      <Icon className="mr-3 text-blue-500 group-hover:text-blue-400 transition-colors" />
       {text}
     </button>
   );
 
   return (
-    <header className="bg-black/90 border-b border-yellow-500/20 shadow-lg backdrop-blur-sm fixed w-full top-0 z-50">
+    <header className="bg-blue-600 border-b border-white/20 shadow-lg backdrop-blur-sm fixed w-full top-0 z-50">
       <nav className="container mx-auto flex items-center justify-between py-4 px-6" ref={menuRef}>
         <button 
           onClick={handleNavigation} 
-          className="text-yellow-500 text-2xl font-bold focus:outline-none hover:text-yellow-400 transition-colors"
+          className="text-white text-2xl font-bold focus:outline-none hover:text-blue-100 transition-colors"
         >
-          Aura Fitness
+          MediCart
         </button>
         
         {/* Mobile Menu Button */}
         <button 
-          className="text-yellow-500 md:hidden focus:outline-none hover:text-yellow-400 transition-colors" 
+          className="text-white md:hidden focus:outline-none hover:text-blue-100 transition-colors" 
           onClick={toggleMenu}
         >
           {menuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
@@ -93,44 +98,40 @@ const Header = () => {
         
         {/* Navigation Links */}
         {!userInfo?.isAdmin && (
-          <div className={`md:flex md:items-center md:space-x-6 absolute md:relative top-full md:top-auto left-0 w-full md:w-auto bg-black/90 md:bg-transparent transition-all duration-300 ease-in-out ${menuOpen ? 'block' : 'hidden md:flex'} z-40`}>
-            <button onClick={() => { navigate('/'); setMenuOpen(false); }} className="block w-full md:w-auto px-6 md:px-0 py-3 md:py-0 text-yellow-100/80 hover:text-yellow-500 hover:bg-yellow-500/10 md:hover:bg-transparent transition-colors text-left">Home</button>
-            <button onClick={() => { navigate('/classes'); setMenuOpen(false); }} className="block w-full md:w-auto px-6 md:px-0 py-3 md:py-0 text-yellow-100/80 hover:text-yellow-500 hover:bg-yellow-500/10 md:hover:bg-transparent transition-colors text-left">Classes</button>
-            <button onClick={() => { navigate('/trainers'); setMenuOpen(false); }} className="block w-full md:w-auto px-6 md:px-0 py-3 md:py-0 text-yellow-100/80 hover:text-yellow-500 hover:bg-yellow-500/10 md:hover:bg-transparent transition-colors text-left">Trainers</button>
-            <button onClick={() => { navigate('/membership'); setMenuOpen(false); }} className="block w-full md:w-auto px-6 md:px-0 py-3 md:py-0 text-yellow-100/80 hover:text-yellow-500 hover:bg-yellow-500/10 md:hover:bg-transparent transition-colors text-left">Membership</button>
-            <button onClick={() => { navigate('/contact'); setMenuOpen(false); }} className="block w-full md:w-auto px-6 md:px-0 py-3 md:py-0 text-yellow-100/80 hover:text-yellow-500 hover:bg-yellow-500/10 md:hover:bg-transparent transition-colors text-left">Contact</button>
+          <div className={`md:flex md:items-center md:space-x-6 absolute md:relative top-full md:top-auto left-0 w-full md:w-auto bg-blue-600 md:bg-transparent transition-all duration-300 ease-in-out ${menuOpen ? 'block' : 'hidden md:flex'} z-40`}>
+            <button onClick={() => { navigate('/'); setMenuOpen(false); }} className="block w-full md:w-auto px-6 md:px-0 py-3 md:py-0 text-white hover:text-blue-100 hover:bg-blue-700/50 md:hover:bg-transparent transition-colors text-left">Home</button>
+            <button onClick={() => { navigate('/products'); setMenuOpen(false); }} className="block w-full md:w-auto px-6 md:px-0 py-3 md:py-0 text-white hover:text-blue-100 hover:bg-blue-700/50 md:hover:bg-transparent transition-colors text-left">Products</button>
+            <button onClick={() => { navigate('/cart'); setMenuOpen(false); }} className="block w-full md:w-auto px-6 md:px-0 py-3 md:py-0 text-white hover:text-blue-100 hover:bg-blue-700/50 md:hover:bg-transparent transition-colors text-left">Cart</button>
+            <button onClick={() => { navigate('/orders'); setMenuOpen(false); }} className="block w-full md:w-auto px-6 md:px-0 py-3 md:py-0 text-white hover:text-blue-100 hover:bg-blue-700/50 md:hover:bg-transparent transition-colors text-left">Orders</button>
+            <button onClick={() => { navigate('/contact'); setMenuOpen(false); }} className="block w-full md:w-auto px-6 md:px-0 py-3 md:py-0 text-white hover:text-blue-100 hover:bg-blue-700/50 md:hover:bg-transparent transition-colors text-left">Contact</button>
           </div>
         )}
 
         {/* User Actions */}
         <div className="flex items-center space-x-4">
           {userInfo ? (
-            <div className="relative" ref={dropdownRef}>
-              <button 
-                className="text-yellow-100/80 font-medium focus:outline-none hover:text-yellow-500 transition-colors flex items-center" 
-                onClick={toggleDropdown}
-              >
-                {userInfo.name}
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  className={`ml-2 h-4 w-4 transform transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
+            <div className="flex items-center space-x-4">
+              <div className="relative" ref={dropdownRef}>
+                <button 
+                  className="text-white font-medium focus:outline-none hover:text-blue-100 transition-colors flex items-center" 
+                  onClick={toggleDropdown}
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                  <span className="mr-2">{userInfo.name}</span>
+                  <FaUser className="text-blue-200" />
+                </button>
+              </div>
+              <button
+                onClick={logoutHandler}
+                className="text-white hover:text-blue-100 transition-colors flex items-center space-x-2 bg-blue-700 hover:bg-blue-600 px-3 py-1.5 rounded-lg text-sm"
+              >
+                <FaSignOutAlt />
+                <span>Logout</span>
               </button>
               {dropdownOpen && userInfo.userType === 'Member' && (
-                <div className="absolute right-0 mt-2 w-56 bg-black/95 rounded-lg shadow-2xl z-50 border border-yellow-500/20 backdrop-blur-sm overflow-hidden">
-                  <div className="px-4 py-3 border-b border-yellow-500/20 flex items-center">
-                    <div className="w-10 h-10 bg-yellow-500/20 rounded-full flex items-center justify-center mr-3">
-                      <FaUser className="text-yellow-500" />
-                    </div>
-                    <div>
-                      <p className="text-yellow-100/90 font-medium">{userInfo.name}</p>
-                      <p className="text-yellow-100/60 text-xs">{userInfo.email}</p>
-                    </div>
+                <div className="absolute right-0 mt-2 w-56 bg-blue-800/95 rounded-lg shadow-2xl z-50 border border-white/20 backdrop-blur-sm overflow-hidden">
+                  <div className="px-4 py-3 border-b border-white/20">
+                    <p className="text-white font-medium">{userInfo.name}</p>
+                    <p className="text-white/60 text-xs">{userInfo.email}</p>
                   </div>
                   
                   <div className="py-1">
@@ -161,13 +162,7 @@ const Header = () => {
                     />
                   </div>
                   
-                  <div className="border-t border-yellow-500/20 py-1">
-                    <ProfileDropdownItem 
-                      icon={FaSignOutAlt} 
-                      text="Logout" 
-                      onClick={() => { logoutHandler(); setDropdownOpen(false); }} 
-                    />
-                  </div>
+
                 </div>
               )}
             </div>
@@ -175,13 +170,13 @@ const Header = () => {
             <>
               <button 
                 onClick={() => navigate('/login')} 
-                className="text-yellow-100/80 text-sm flex items-center hover:text-yellow-500 transition-colors"
+                className="text-white text-sm flex items-center hover:text-blue-100 transition-colors"
               >
                 <FaSignInAlt className="mr-1" /> Sign In
               </button>
               <button 
                 onClick={() => navigate('/register')} 
-                className="text-yellow-100/80 text-sm flex items-center hover:text-yellow-500 transition-colors"
+                className="text-white text-sm flex items-center hover:text-blue-100 transition-colors"
               >
                 <FaSignOutAlt className="mr-1" /> Sign Up
               </button>
