@@ -7,13 +7,15 @@ import { useUpdateUserMutation, useDeleteUserMutation } from "../slices/usersApi
 import { setCredentials, logout } from "../slices/authSlice";
 
 const ProfileScreen = () => {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [userType, setUserType] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [address, setAddress] = useState("");
+  const [formData, setFormData] = useState({
+    email: '',
+    name: '',
+    userType: '',
+    mobile: '',
+    password: '',
+    confirmPassword: '',
+    address: ''
+  });
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -21,37 +23,74 @@ const ProfileScreen = () => {
   const [updateProfile, { isLoading: isUpdating }] = useUpdateUserMutation();
   const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
 
+  const { email, name, userType, mobile, password, confirmPassword, address } = formData;
+
+  const handleChange = (e) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
   useEffect(() => {
-    setName(userInfo.name);
-    setEmail(userInfo.email);
-    setUserType(userInfo.userType);
-    setMobile(userInfo.mobile);
-    setAddress(userInfo.address);
-  }, [userInfo]);
+    if (!userInfo) {
+      navigate('/login');
+      return;
+    }
+
+    setFormData({
+      name: userInfo.name || '',
+      email: userInfo.email || '',
+      userType: userInfo.userType || '',
+      mobile: userInfo.mobile || '',
+      address: userInfo.address || '',
+      password: '',
+      confirmPassword: ''
+    });
+  }, [userInfo, navigate]);
 
 
 
   const submitHandler = async (e) => {
     e.preventDefault();
+    
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
-    } else {
-      try {
-        const res = await updateProfile({
-          _id: userInfo._id,
-          name,
-          email,
-          userType,
-          mobile,
-
-          password,
-          address,
-        }).unwrap();
-        dispatch(setCredentials(res));
-        toast.success("Profile updated successfully");
-      } catch (err) {
-        toast.error(err?.data?.message || err.error);
+      return;
+    }
+    
+    try {
+      const updates = {
+        name,
+        email,
+        mobile,
+        address
+      };
+      
+      if (password) {
+        updates.password = password;
       }
+
+      const res = await updateProfile(updates).unwrap();
+      
+      // Update Redux store with new user data
+      dispatch(setCredentials({
+        ...userInfo,
+        ...res
+      }));
+      
+      toast.success("Profile updated successfully");
+      setFormData(prev => ({
+        ...prev,
+        password: '',
+        confirmPassword: ''
+      }));
+    } catch (err) {
+      toast.error(
+        err?.data?.message || 
+        err?.error || 
+        'An error occurred while updating profile'
+      );
     }
   };
 
@@ -96,8 +135,9 @@ const ProfileScreen = () => {
               <label className="text-blue-100/80 text-sm">Full Name</label>
               <input
                 type="text"
+                name="name"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={handleChange}
                 className="w-full px-4 py-3 bg-white/10 border border-blue-500/30 rounded-lg text-white placeholder-blue-100/50 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
               />
             </div>
@@ -106,8 +146,9 @@ const ProfileScreen = () => {
               <label className="text-blue-100/80 text-sm">Email Address</label>
               <input
                 type="email"
+                name="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleChange}
                 className="w-full px-4 py-3 bg-white/10 border border-blue-500/30 rounded-lg text-white placeholder-blue-100/50 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
               />
             </div>
@@ -116,8 +157,9 @@ const ProfileScreen = () => {
               <label className="text-blue-100/80 text-sm">Mobile Number</label>
               <input
                 type="text"
+                name="mobile"
                 value={mobile}
-                onChange={(e) => setMobile(e.target.value)}
+                onChange={handleChange}
                 className="w-full px-4 py-3 bg-white/10 border border-blue-500/30 rounded-lg text-white placeholder-blue-100/50 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
               />
             </div>
@@ -136,8 +178,9 @@ const ProfileScreen = () => {
               <label className="text-blue-100/80 text-sm">New Password</label>
               <input
                 type="password"
+                name="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={handleChange}
                 className="w-full px-4 py-3 bg-white/10 border border-blue-500/30 rounded-lg text-white placeholder-blue-100/50 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
                 placeholder="Enter new password (optional)"
               />
@@ -147,8 +190,9 @@ const ProfileScreen = () => {
               <label className="text-blue-100/80 text-sm">Confirm Password</label>
               <input
                 type="password"
+                name="confirmPassword"
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={handleChange}
                 className="w-full px-4 py-3 bg-white/10 border border-blue-500/30 rounded-lg text-white placeholder-blue-100/50 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
                 placeholder="Confirm new password"
               />
@@ -161,8 +205,9 @@ const ProfileScreen = () => {
               <label className="text-blue-100/80 text-sm">Address</label>
               <input
                 type="text"
+                name="address"
                 value={address}
-                onChange={(e) => setAddress(e.target.value)}
+                onChange={handleChange}
                 className="w-full px-4 py-3 bg-white/10 border border-blue-500/30 rounded-lg text-white placeholder-blue-100/50 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
               />
             </div>

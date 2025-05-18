@@ -17,17 +17,18 @@ import { protect } from '../middleware/authMiddleware.js';
 const router = Router();
 
 // Routes
-router.post('/login', authUser); // Ensure this is the login route for user authentication
+router.post('/auth', authUser); // Main authentication route
+router.post('/login', authUser); // Keep for backward compatibility
 router.post('/register', registerUser);
 router.post('/auth/logout', protect, logoutUser);
-router.get('/profile', getUserProfile);
-router.put('/profile', updateUserProfile);
+router.route('/profile')
+  .get(protect, getUserProfile)
+  .put(protect, updateUserProfile);
 router.get('/all', getAllUsers);
 router.route('/:id')
   .get(getUser)
   .put(updateUserById)
   .delete(deleteUser);
-router.post('/auth', authUser); 
 
 // Forgot password functionality
 router.post('/forgot-password', forgotPassword);  // Add this route

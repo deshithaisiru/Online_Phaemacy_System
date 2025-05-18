@@ -40,10 +40,10 @@ export default function AdminDashboard() {
       description: 'Manage pharmacy staff and roles'
     },
     {
-      name: 'Supplier Management',
-      path: '/admin/suppliers',
+      name: 'Inventory Management',
+      path: '/admin/inventory',
       icon: '🤝',
-      description: 'Manage relationships with pharmaceutical suppliers'
+      description: 'Manage store inventory with pharmaceutical suppliers'
     },
     {
       name: 'Payment History',

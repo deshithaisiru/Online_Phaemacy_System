@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useGetAllUsersQuery, useDeleteUserByIdMutation } from '../../slices/usersApiSlice';
 import { FaSpinner } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const CustomerManagement = () => {
   const navigate = useNavigate();
@@ -28,6 +30,61 @@ const CustomerManagement = () => {
   const handleAddNew = () => {
     navigate('/admin/customers/add');
   };
+
+  const generatePDF = () => {
+    try {
+      // Create new PDF document
+      const doc = new jsPDF();
+      
+      // Add title
+      doc.setFontSize(18);
+      doc.text('Customer List Report', 14, 20);
+      doc.setFontSize(11);
+      doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 30);
+
+      // Prepare the data for the table
+      const tableData = users?.map(user => [
+        user.name,
+        user.email,
+        user.mobile,
+        user.isAdmin ? 'Admin' : 'Customer'
+      ]) || [];
+
+      // Define the table columns
+      const tableColumns = [
+        'Name',
+        'Email',
+        'Phone',
+        'Status'
+      ];
+
+      // Add the table to the PDF
+      autoTable(doc, {
+        head: [tableColumns],
+        body: tableData,
+        startY: 40,
+        theme: 'grid',
+        styles: {
+          fontSize: 10,
+          cellPadding: 3,
+          overflow: 'linebreak',
+        },
+        headStyles: {
+          fillColor: [41, 98, 255],
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+        },
+      });
+
+      // Save the PDF
+      doc.save('customer-list.pdf');
+      toast.success('PDF generated successfully!');
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      toast.error('Failed to generate PDF');
+    }
+  };
+
   return (
     <div className="min-h-screen p-8 bg-gray-100">
       <div className="max-w-6xl mx-auto">
@@ -37,12 +94,20 @@ const CustomerManagement = () => {
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold">Customer List</h2>
-            <button 
-              onClick={handleAddNew}
-              className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition-colors"
-            >
-              Add New Customer
-            </button>
+            <div className="flex gap-4">
+              <button 
+                onClick={generatePDF}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+              >
+                Generate PDF
+              </button>
+              <button 
+                onClick={handleAddNew}
+                className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition-colors"
+              >
+                Add New Customer
+              </button>
+            </div>
           </div>
           
           {/* Placeholder for customer table */}

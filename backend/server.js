@@ -8,6 +8,17 @@ import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import userRoutes from './routes/userRoutes.js';
 import cors from 'cors';
 
+//Inventory - Deshitha
+import itemsRouter from './routes/Inventory/items.route.js';
+
+// Import Employee models
+import Counter from './models/Employee/Counter.js';
+
+// Employee Routes
+import employeeRoutes from './routes/Employee/employeeRoutes.js';
+import attendanceRoutes from './routes/Employee/attendanceRoutes.js';
+import payrollRoutes from './routes/Employee/payrollRoutes.js';
+
 const port = process.env.PORT || 5001;
 
 // Connect to the database
@@ -44,6 +55,14 @@ app.use(cookieParser());
 
 // User routes
 app.use('/api/users', userRoutes);
+
+//Inventory - Deshitha
+app.use('/api/items', itemsRouter);
+
+// Employee - Routes
+app.use('/api/employees', employeeRoutes);
+app.use('/api/attendance', attendanceRoutes);
+app.use('/api/payroll', payrollRoutes);
 
 // Test route to verify API is working
 app.get('/api/test', (req, res) => {

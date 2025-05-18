@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      '/api/medicart': {
+      '/api': {
         target: 'http://localhost:5001', // backend server
         changeOrigin: true,
         secure: false,

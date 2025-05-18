@@ -67,7 +67,9 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         url: `${USERS_URL}/profile`,
         method: 'PUT',
         body: data,
+        credentials: 'include',
       }),
+      invalidatesTags: ['User'],
     }),
     deleteUser: builder.mutation({
       query: () => ({

@@ -2,7 +2,7 @@ import { fetchBaseQuery, createApi } from '@reduxjs/toolkit/query/react';
 
 // Update the baseUrl to point to your server
 const baseQuery = fetchBaseQuery({ 
-  baseUrl: 'http://localhost:5001',
+  baseUrl: 'http://localhost:5001/api',
   credentials: 'include',
   prepareHeaders: (headers) => {
     headers.set('Content-Type', 'application/json');

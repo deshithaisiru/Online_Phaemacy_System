@@ -57,7 +57,7 @@ const Header = () => {
   const handleNavigation = () => {
     if (userInfo) {
       if (userInfo.isAdmin) {
-        navigate('/dashboard');
+        navigate('/admin-dashboard');
       } else if (userInfo.userType === 'Trainer') {
         navigate('/trainer-dashboard');
       } else if (userInfo.userType === 'Member') {
@@ -119,6 +119,46 @@ const Header = () => {
                   <span className="mr-2">{userInfo.name}</span>
                   <FaUser className="text-blue-200" />
                 </button>
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-blue-800/95 rounded-lg shadow-2xl z-50 border border-white/20 backdrop-blur-sm overflow-hidden">
+                    <div className="px-4 py-3 border-b border-white/20">
+                      <p className="text-white font-medium">{userInfo.name}</p>
+                      <p className="text-white/60 text-xs">{userInfo.email}</p>
+                    </div>
+                    
+                    <div className="py-1">
+                      <ProfileDropdownItem 
+                        icon={FaUser} 
+                        text="View Profile" 
+                        onClick={() => { navigate('/profile'); setDropdownOpen(false); }} 
+                      />
+                      {userInfo.userType === 'Member' && (
+                        <>
+                          <ProfileDropdownItem 
+                            icon={FaChartLine} 
+                            text="My Progress" 
+                            onClick={() => { navigate('/pdisplay'); setDropdownOpen(false); }} 
+                          />
+                          <ProfileDropdownItem 
+                            icon={FaCalendarAlt} 
+                            text="My Schedule" 
+                            onClick={() => { navigate('/myschedule'); setDropdownOpen(false); }} 
+                          />
+                          <ProfileDropdownItem 
+                            icon={FaStore} 
+                            text="Store" 
+                            onClick={() => { navigate('/store'); setDropdownOpen(false); }} 
+                          />
+                          <ProfileDropdownItem 
+                            icon={FaChartLine} 
+                            text="Feedback" 
+                            onClick={() => { navigate('/feedback'); setDropdownOpen(false); }} 
+                          />
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
               <button
                 onClick={logoutHandler}
@@ -127,44 +167,6 @@ const Header = () => {
                 <FaSignOutAlt />
                 <span>Logout</span>
               </button>
-              {dropdownOpen && userInfo.userType === 'Member' && (
-                <div className="absolute right-0 mt-2 w-56 bg-blue-800/95 rounded-lg shadow-2xl z-50 border border-white/20 backdrop-blur-sm overflow-hidden">
-                  <div className="px-4 py-3 border-b border-white/20">
-                    <p className="text-white font-medium">{userInfo.name}</p>
-                    <p className="text-white/60 text-xs">{userInfo.email}</p>
-                  </div>
-                  
-                  <div className="py-1">
-                    <ProfileDropdownItem 
-                      icon={FaUser} 
-                      text="Profile" 
-                      onClick={() => { navigate('/profile'); setDropdownOpen(false); }} 
-                    />
-                    <ProfileDropdownItem 
-                      icon={FaChartLine} 
-                      text="My Progress" 
-                      onClick={() => { navigate('/pdisplay'); setDropdownOpen(false); }} 
-                    />
-                    <ProfileDropdownItem 
-                      icon={FaCalendarAlt} 
-                      text="My Schedule" 
-                      onClick={() => { navigate('/myschedule'); setDropdownOpen(false); }} 
-                    />
-                    <ProfileDropdownItem 
-                      icon={FaStore} 
-                      text="Store" 
-                      onClick={() => { navigate('/store'); setDropdownOpen(false); }} 
-                    />
-                    <ProfileDropdownItem 
-                      icon={FaChartLine} 
-                      text="Feedback" 
-                      onClick={() => { navigate('/feedback'); setDropdownOpen(false); }} 
-                    />
-                  </div>
-                  
-
-                </div>
-              )}
             </div>
           ) : (
             <>
