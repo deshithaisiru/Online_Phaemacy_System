@@ -28,6 +28,7 @@ export default function Details() {
         console.error(error.message);
       }
     };
+    //comited
     fetchItem();
   }, [itemId]);
 
