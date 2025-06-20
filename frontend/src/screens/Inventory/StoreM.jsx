@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import "jspdf-autotable";
 import { 
   PencilIcon, 
   TrashIcon, 
@@ -213,11 +214,13 @@ export default function StoreM() {
     const tableWidth = 195; // Sum of all column widths
     const leftMargin = (pageWidth - tableWidth) / 2;
 
+    // console.log("Is autoTable available:", typeof doc.autoTable);
     doc.autoTable({
       startY: 65,
       columns: columns,
       body: data,
       margin: { top: 65, right: leftMargin, bottom: 20, left: leftMargin },
+
       styles: { 
         fontSize: 9, 
         cellPadding: 3,
